@@ -124,8 +124,18 @@ def update_price(cafe_id):
         return jsonify(error={"Not Found": "Sorry a cafe with that id was not found in the database."})
 
 
-
-
+@app.route('/report-closed/<int:cafe_id>', methods=["DELETE"])
+def delete(cafe_id):
+    key = "TopSecretAPIKey"
+    cafe = Cafe.query.filter_by(id=cafe_id).first()
+    if cafe and request.args.get('api-key') == key:
+        db.session.delete(cafe)
+        db.session.commit()
+        return jsonify(success={"Success": "Record has been deleted."} )
+    elif request.args.get('api-key') != key:
+        return jsonify(error="Sorry, that's not allowed. Make sure you have the correct api_key.")
+    else:
+        return jsonify(error={"Not Found": "Sorry a cafe with that id was not found in the database"})
 
 
 
